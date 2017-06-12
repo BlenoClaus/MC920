@@ -52,7 +52,7 @@ class CompressImage(object):
 		return np.sqrt(np.mean((self.img.data-self.compressImage)**2))
 
 	def getCompressionRatio(self):
-		return np.float(self.img.getNrBytes())/np.float(self.getNrBytes())
+		return np.float(self.getNrBytes())/np.float(self.img.getNrBytes())
 
 	def save(self):
 		misc.imsave(self.img.name+"_compress_"+str(self.k)+"."+self.img.formatImg, self.compressImage)

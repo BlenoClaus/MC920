@@ -3,6 +3,7 @@
 # Ra: 145444
 import numpy as np
 from scipy import misc
+import matplotlib.pyplot as plt
 
 
 class Image(object):
@@ -32,7 +33,7 @@ class CompressImage(object):
 
 	def getUSVbyChannel(self, channel):
 		U,S,V = self.img.getUSVbyChannel(channel)
-		return U[:, 0:k], np.diag(S)[0:k, 0:k], V[0:k, :] 
+		return U[:, 0:self.k], np.diag(S)[0:self.k, 0:self.k], V[0:self.k, :] 
 
 	def getNrBytes(self):
 		num = 0
@@ -58,19 +59,44 @@ class CompressImage(object):
 		misc.imsave(self.img.name+"_compress_"+str(self.k)+"."+self.img.formatImg, self.compressImage)
 
 
+class Graphic(object):
+
+	def plot(self, title,xText, yText, k, values):
+		plt.title(title, fontsize=30)
+		plt.xlabel(xText, fontsize=30)
+		plt.ylabel(yText, fontsize=30)
+		plt.bar(k, values, width=1, color="blue", align="center")
+		plt.show()
+
+
 ######################################################
 ####	main
 ######################################################
 
+
+## inputs data
 imageName = "peppers"
 formatImg = "png"
-k = 50
+k = [10, 20, 30, 50, 70, 100, 150, 200, 250, 300, 350]
 
-newImagem = Image(imageName, formatImg)
-newCompressImg = CompressImage(newImagem,k)
-newCompressImg.save()
-print newCompressImg.getRMSE()
-print newCompressImg.getCompressionRatio()
-newCompressImg.save()
+## computing
+P = []
+RMSE = []
 
+for i in range(len(k)):
+	print "Values to k = "+str(k[i])+" :"
+	newImagem = Image(imageName, formatImg)
+	newCompressImg = CompressImage(newImagem,k[i])
+	newCompressImg.save()
+	rmse = newCompressImg.getRMSE()
+	RMSE.append(rmse)
+	print "	RMSE = "+str(rmse)
+	p = newCompressImg.getCompressionRatio()
+	P.append(p)
+	print "	Compression Rate = " + str(p)
+	newCompressImg.save()
 
+graphic = Graphic()
+graphic.plot("Compression Rate x K", "k", "Compression Rate", k, P)
+graphic.plot("RMSE x K", "k","RMSE", k, RMSE)
+graphic.plot("RMSE x Compression Rate", "RMSE", "Compression Rate", RMSE, P)

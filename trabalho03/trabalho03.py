@@ -14,6 +14,7 @@ class Image(object):
 		self.data = misc.imread(self.name)
 		self.x, self.y, self.z = self.data.shape[0], self.data.shape[1], self.data.shape[2]
 
+	#doc: https://docs.scipy.org/doc/numpy/reference/generated/numpy.linalg.svd.html
 	def getUSVbyChannel(self, channel):
 		return np.linalg.svd(self.data[:, :, channel])
 
